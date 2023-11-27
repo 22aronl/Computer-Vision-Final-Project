@@ -24,7 +24,7 @@ class SVM:
         # return np.maximum(0, 1 - y_true * y_pred)
 
 
-    def train(self, train_data, y_true, test_data, test_y_true, learning_rate=1e-5, epochs=1e6, batch_size=64, eval_freq=5000, save_freq=30000, save_dir='weights'):
+    def train(self, train_data, y_true, test_data, test_y_true, learning_rate=1e-5, epochs=1e5, batch_size=64, eval_freq=5000, save_freq=30000, save_dir='weights'):
         num_samples, num_features = train_data.shape
         self.weights = np.random.uniform(low=-1, high=1, size=num_features)
         self.bias = 0.0
@@ -61,7 +61,7 @@ class SVM:
                 
                 # self.bias += learning_rate * gradient_bias
                 
-            if (epoch)% eval_freq == 0:
+            if (epoch+1)% eval_freq == 0:
                 accuracy = self.evaluate_accuracy(test_data, test_y_true)
                 print(f"Epoch {epoch}/{epochs}, Test Accuracy: {accuracy:.4f}")
                 # breakpoint()
