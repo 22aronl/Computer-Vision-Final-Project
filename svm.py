@@ -24,7 +24,7 @@ class SVM:
         # return np.maximum(0, 1 - y_true * y_pred)
 
 
-    def train(self, train_data, y_true, test_data, test_y_true, learning_rate=1e-5, epochs=1e5, batch_size=64, eval_freq=5000, save_freq=30000, negative_min_freq =200, save_dir='weights'):
+    def train(self, train_data, y_true, test_data, test_y_true, learning_rate=1e-5, epochs=1e5, batch_size=64, eval_freq=5000, save_freq=25000, negative_min_freq =25000, save_dir='weights'):
         num_samples, num_features = train_data.shape
         self.weights = np.random.uniform(low=-1, high=1, size=num_features)
         self.bias = 0.0
@@ -77,7 +77,10 @@ class SVM:
                 print(f"Weights saved at epoch {epoch + 1} with an accuracy of {accuracy:.4f}")
                 
             if (epoch+1) % negative_min_freq == 0:
-                #train_data, y_true = self.negative_mine(train_data, y_true)
+                print(f'Negative mining at epoch {epoch + 1}')
+                print(f'{train_data.shape} {y_true.shape}')
+                train_data, y_true = self.negative_mine(train_data, y_true)
+                print(f'after {train_data.shape} {y_true.shape}')
                 # self.negative_mine(train_data, y_true)
                 pass
                 

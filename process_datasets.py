@@ -133,7 +133,8 @@ def read_annotation_file(file_path):
             
     return annotations
 
-base_path = 'B:CS376_Images/assignment5'
+# base_path = 'B:CS376_Images/assignment5'
+base_path = '/Users/aaronlo/Downloads'
 annotations_path = f"{base_path}/FDDB-folds/FDDB-fold-{{}}-ellipseList.txt"
 images_path = f"{base_path}/originalPics/{{}}.jpg"
 
@@ -172,7 +173,7 @@ def read_images_with_annotations(annotation_path, target_ratio=1.5, false_scalin
         
             true_patches.append(true_patch_histogram)
             
-        false_patches.extend(generate_false_patches(8-len(annotation[1]), grey_image, annotation[1]))
+        false_patches.extend(generate_false_patches(30-len(annotation[1]), grey_image, annotation[1]))
     
     return true_patches, false_patches
 
