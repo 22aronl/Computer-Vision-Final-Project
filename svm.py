@@ -24,7 +24,7 @@ class SVM:
         # return np.maximum(0, 1 - y_true * y_pred)
 
 
-    def train(self, train_data, y_true, test_data, test_y_true, learning_rate=1e-5, epochs=1e5, batch_size=64, eval_freq=5000, save_freq=30000, save_dir='weights'):
+    def train(self, train_data, y_true, test_data, test_y_true, learning_rate=1e-5, epochs=1e6, batch_size=64, eval_freq=5000, save_freq=30000, save_dir='weights'):
         num_samples, num_features = train_data.shape
         self.weights = np.random.uniform(low=-1, high=1, size=num_features)
         self.bias = 0.0
@@ -32,6 +32,8 @@ class SVM:
         os.makedirs(save_dir, exist_ok=True)
         start_time = time.time()
         
+        max_accuracy = 0.0
+        accuracy = 0.0
         for epoch in range(int(epochs)):
             epoch_indices = np.arange(num_samples)
             np.random.shuffle(epoch_indices)
@@ -63,15 +65,16 @@ class SVM:
                 
             if (epoch+1)% eval_freq == 0:
                 accuracy = self.evaluate_accuracy(test_data, test_y_true)
-                print(f"Epoch {epoch}/{epochs}, Test Accuracy: {accuracy:.4f}")
+                print(f"Epoch {epoch+1}/{epochs}, Test Accuracy: {accuracy:.4f}")
                 # breakpoint()
                 
-            if (epoch+1) % save_freq == 0:
+            if accuracy > max_accuracy or (epoch+1) % save_freq == 0:
+                max_accuracy = max(accuracy, max_accuracy)
                 timestamp = time.strftime("%Y%m%d_%H%M%S")
                 weights_filename = f"weights_{timestamp}_epoch_{epoch + 1}.npz"
                 weights_filepath = os.path.join(save_dir, weights_filename)
                 self.save_model(weights_filepath)
-                print(f"Weights saved at epoch {epoch + 1}")
+                print(f"Weights saved at epoch {epoch + 1} with an accuracy of {accuracy:.4f}")
                 
         end_time = time.time()
         runtime = end_time - start_time
