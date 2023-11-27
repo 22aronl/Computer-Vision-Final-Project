@@ -21,15 +21,26 @@ def convert_to_rectangular(major_axis_radius, minor_axis_radius, angle, center_x
     
     return [center_x-half_width, center_y-half_height, 2*half_width, 2*half_height]
 
-#the second box is not centered
-def intersection_over_union(rect1, rect2):
+def intersection_over_union_area(rect1, rect2):
     x1, y1, w1, h1 = rect1
     x2, y2, w2, h2 = rect2
     
-    # x1 -= w1
-    # y1 -= h1
-    # w1 *= 2
-    # h1 *= 2
+    x_inter = max(x1, x2)
+    y_inter = max(y1, y2)
+    w_inter = min(x1 + w1, x2 + w2) - x_inter
+    h_inter = min(y1 + h1, y2 + h2) - y_inter
+    
+    area_inter = max(0, w_inter) * max(0, h_inter)
+    
+    area_union = w1 * h1 + w2 * h2 - area_inter
+
+    iou = area_inter / area_union if area_union > 0 else 0
+
+    return iou, area_inter
+
+def intersection_over_union(rect1, rect2):
+    x1, y1, w1, h1 = rect1
+    x2, y2, w2, h2 = rect2
     
     x_inter = max(x1, x2)
     y_inter = max(y1, y2)
@@ -122,7 +133,7 @@ def read_annotation_file(file_path):
             
     return annotations
 
-base_path = '/Users/aaronlo/Downloads'
+base_path = 'B:CS376_Images/assignment5'
 annotations_path = f"{base_path}/FDDB-folds/FDDB-fold-{{}}-ellipseList.txt"
 images_path = f"{base_path}/originalPics/{{}}.jpg"
 
@@ -161,7 +172,7 @@ def read_images_with_annotations(annotation_path, target_ratio=1.5, false_scalin
         
             true_patches.append(true_patch_histogram)
             
-        false_patches.extend(generate_false_patches(12-len(annotation[1]), grey_image, annotation[1]))
+        false_patches.extend(generate_false_patches(8-len(annotation[1]), grey_image, annotation[1]))
     
     return true_patches, false_patches
 
