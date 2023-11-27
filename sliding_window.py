@@ -1,19 +1,19 @@
 import cv2
 
-from process_datasets import resize_image
+from process_datasets import resize_image, intersection_over_union_area
 from hog_descriptor import extract_hog_descriptor
 from svm import SVM
 
 #greyscaled image
-def sliding_window(image, window_size, classifier: SVM, threshold=0.0007, step_size=(8, 8)):
+def sliding_window(image, window_size, classifier: SVM, threshold=0.0006, step_size=(8, 8)):
     height, width = image.shape
     predictions = []
     
     for i in range(0, height - window_size[1] + 1, step_size[1]):
         for j in range(0, width - window_size[0] + 1, step_size[0]):
-            print(f'{i} {j} {height} {width} {window_size[1]} {window_size[0]}')
+            # print(f'{i} {j} {height} {width} {window_size[1]} {window_size[0]}')
             window = image[i:i + window_size[1], j:j + window_size[0]]
-            print(f'{len(window)} and {len(window[0])}')
+            # print(f'{len(window)} and {len(window[0])}')
             resized_window = resize_image(window)
             
             window_hog = extract_hog_descriptor(resized_window)
@@ -43,7 +43,34 @@ def image_pyramid(image, classifier: SVM, aspect_ratio=1.5, min_window_size=(36,
 
     return total_predictions
 
-def overlay_boxes(image, boxes, color=(0, 255, 0), thickness=2):
+def check_area(box1, box2, area_inter, area_threshold):
+    x1, y1, w1, h1 = box1
+    x2, y2, w2, h2 = box2
+    
+    area1 = w1 * h1
+    area2 = w2 * h2
+    
+    return abs(1 - area_inter / area1) < area_threshold or abs(1 - area_inter / area2) < area_threshold
+
+def add_box(boxes, box, iou_threshold=0.4, area_threshold=0.3):
+    for b in boxes:
+        iou, area_inter = intersection_over_union_area(b[0:4], box[0:4])
+        if(iou > iou_threshold or check_area(b[0:4], box[0:4], area_inter, area_threshold)):
+            return False
+    return True
+
+def nme(boxes, iou_threshold=0.4):
+    new_boxes = []
+    boxes = sorted(boxes, key=lambda x: x[4], reverse=True)
+    
+    for box in boxes:
+        if(add_box(new_boxes, box, iou_threshold)):
+            new_boxes.append(box)
+            
+    return new_boxes
+    
+
+def overlay_boxes(image, boxes, color=(0, 0, 255), thickness=2):
 
     image_with_boxes = image.copy()
 
@@ -58,13 +85,14 @@ if __name__ == '__main__':
     svm = SVM()
     svm.load_model('/Users/aaronlo/Desktop/cs376/assignment5/weights/weights_20231126_213700_epoch_150000.npz')
     
-    img = cv2.imread("/Users/aaronlo/Downloads/originalPics/2003/05/01/big/img_33.jpg")
+    img = cv2.imread("/Users/aaronlo/Downloads/originalPics/2003/05/01/big/img_664.jpg")
     grey_img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     
     total_predictions = image_pyramid(grey_img, svm)
     
     print(f'Number of predictions{len(total_predictions)}')
-    image_with_boxes = overlay_boxes(grey_img, total_predictions)
+    nme_predictions = nme(total_predictions)
+    image_with_boxes = overlay_boxes(img, nme_predictions)
 
     # Display the image with bounding boxes
     cv2.imshow("Image with Bounding Boxes", image_with_boxes)
