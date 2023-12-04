@@ -52,7 +52,8 @@ class SVM:
                         ti = batch_y_true[j] * (np.dot(self.weights, batch_data[j].T) + self.bias)
                         if ti <= 1:
                             gradient_weights += batch_y_true[j] * batch_data[j]
-                            gradient_bias -= batch_y_true[j]
+                            gradient_bias += batch_y_true[j]
+                            
                 #batch_y_ture 1x64
                 #batch_data 64 x 800
                 self.weights += -learning_rate * self.weights + learning_rate * gradient_weights
@@ -64,6 +65,12 @@ class SVM:
             if (epoch+1)% eval_freq == 0:
                 accuracy = self.evaluate_accuracy(test_data, test_y_true)
                 print(f"Epoch {epoch+1}/{epochs}, Test Accuracy: {accuracy:.4f}")
+                self.evaluate_accuracy(test_data, test_y_true, threshold=-0.25)
+                self.evaluate_accuracy(test_data, test_y_true, threshold=-0.5)
+                self.evaluate_accuracy(test_data, test_y_true, threshold=-0.6)
+                self.evaluate_accuracy(test_data, test_y_true, threshold=-0.75)
+                self.evaluate_accuracy(test_data, test_y_true, threshold=-0.80)
+                self.evaluate_accuracy(test_data, test_y_true, threshold=-0.9)
                 # breakpoint()
                 
             if accuracy > max_accuracy or (epoch+1) % save_freq == 0:
@@ -105,16 +112,17 @@ class SVM:
     def predict(self, X):
         return np.dot(X, self.weights) + self.bias
 
-    def evaluate_accuracy(self, test_data, y_true):
+    def evaluate_accuracy(self, test_data, y_true, threshold=0.0):
         predictions = self.predict(test_data)
-        y_pred = np.where(predictions > 0, 1, -1)
+        y_pred = np.where(predictions > threshold, 1, -1)
         # breakpoint()
         # get true positives, true negatives, false positives, false negatives
         tp = np.sum(np.logical_and(y_pred == 1, y_true == 1))
         tn = np.sum(np.logical_and(y_pred == -1, y_true == -1))
         fp = np.sum(np.logical_and(y_pred == 1, y_true == -1))
         fn = np.sum(np.logical_and(y_pred == -1, y_true == 1))
-        print(f'tp {tp} tn {tn} fp {fp} fn {fn}')
+        print(f'tp {tp} tn {tn} fp {fp} fn {fn} at threshold {threshold}')
+        print(f'true accurate {tp/(tp+fn)} true negative {tn/(tn+fp)}')
         accuracy = (tp / (tp + fn) + tn / (tn + fp))/2
         return accuracy
     
