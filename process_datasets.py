@@ -133,8 +133,8 @@ def read_annotation_file(file_path):
             
     return annotations
 
-# base_path = 'B:CS376_Images/assignment5'
-base_path = '/Users/aaronlo/Downloads'
+base_path = 'B:CS376_Images/assignment5'
+# base_path = '/Users/aaronlo/Downloads'
 annotations_path = f"{base_path}/FDDB-folds/FDDB-fold-{{}}-ellipseList.txt"
 images_path = f"{base_path}/originalPics/{{}}.jpg"
 
@@ -173,12 +173,12 @@ def read_images_with_annotations(annotation_path, target_ratio=1.5, false_scalin
         
             true_patches.append(true_patch_histogram)
             
-        false_patches.extend(generate_false_patches(30-len(annotation[1]), grey_image, annotation[1]))
+        false_patches.extend(generate_false_patches(45-len(annotation[1]), grey_image, annotation[1]))
     
     return true_patches, false_patches
 
 # list of numbers of the annotations to be read
-def read_image_set(image_set_path):
+def read_image_set(image_set_path, true_weighting=1):
     true_patches = []
     false_patches = []
     
@@ -189,7 +189,7 @@ def read_image_set(image_set_path):
     
     data_set = true_patches + false_patches
     
-    y_true = [1] * len(true_patches)
+    y_true = [1 * true_weighting] * len(true_patches)
     y_true.extend([-1] * len(false_patches))
     
     print(f'dataset {len(true_patches)}, {len(false_patches)}, {len(data_set)}')
@@ -198,7 +198,7 @@ def read_image_set(image_set_path):
     return np.array(data_set), np.array(y_true)
     
 def read_train_set():
-    return read_image_set(range(1, 8))
+    return read_image_set(range(1, 8), true_weighting=10)
 
 def read_test_set():
     return read_image_set(range(9, 10))

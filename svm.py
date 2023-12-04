@@ -24,7 +24,7 @@ class SVM:
         # return np.maximum(0, 1 - y_true * y_pred)
 
 
-    def train(self, train_data, y_true, test_data, test_y_true, learning_rate=1e-5, epochs=1e5, batch_size=64, eval_freq=5000, save_freq=25000, negative_min_freq =25000, save_dir='weights'):
+    def train(self, train_data, y_true, test_data, test_y_true, learning_rate=1e-5, epochs=1e5, batch_size=64, eval_freq=1000, save_freq=5000, negative_min_freq =5000, save_dir='weights'):
         num_samples, num_features = train_data.shape
         self.weights = np.random.uniform(low=-1, high=1, size=num_features)
         self.bias = 0.0
@@ -50,9 +50,7 @@ class SVM:
                 for j in range(0, batch_size):
                     if i + j < num_samples:
                         ti = batch_y_true[j] * (np.dot(self.weights, batch_data[j].T) + self.bias)
-                        if ti > 1:
-                            pass
-                        else:
+                        if ti <= 1:
                             gradient_weights += batch_y_true[j] * batch_data[j]
                             gradient_bias += batch_y_true[j]
                 #batch_y_ture 1x64
@@ -88,15 +86,15 @@ class SVM:
         runtime = end_time - start_time
         print(f"Total runtime: {runtime:.2f} seconds")
         
-    def negative_mine(self, train_data, y_true, percentage_false=0.2):
+    def negative_mine(self, train_data, y_true, percentage_false=0.7):
         # breakpoint()
         predictions = self.predict(train_data)
-        false_positives_indices = np.where(np.logical_and(predictions > 0, y_true < 0))[0]
+        false_positives_indices = np.where(np.logical_and(predictions <= 0, y_true == 1))[0]
         
         #fal = predictions[false_positives]
         false_positives = sorted(false_positives_indices, key=lambda x: predictions[x], reverse=False)
         fal = train_data[false_positives[0:int(len(false_positives)*percentage_false)]]
-        neg = np.full(len(fal), -1)
+        neg = np.full(len(fal), 1)
         if(len(fal) == 0):
             return
         train_data = np.concatenate((train_data, fal), axis=0)
@@ -111,7 +109,13 @@ class SVM:
         predictions = self.predict(test_data)
         y_pred = np.where(predictions > 0, 1, -1)
         # breakpoint()
-        accuracy = np.mean(y_pred == y_true)
+        # get true positives, true negatives, false positives, false negatives
+        tp = np.sum(np.logical_and(y_pred == 1, y_true == 1))
+        tn = np.sum(np.logical_and(y_pred == -1, y_true == -1))
+        fp = np.sum(np.logical_and(y_pred == 1, y_true == -1))
+        fn = np.sum(np.logical_and(y_pred == -1, y_true == 1))
+        print(f'tp {tp} tn {tn} fp {fp} fn {fn}')
+        accuracy = (tp / (tp + fn) + tn / (tn + fp))/2
         return accuracy
     
     def svm_test(self, test_data, y_true):
@@ -139,4 +143,5 @@ if __name__ == '__main__':
     svm.train(train_data, y_true, test_data, test_y_true)
     svm.save_model('final_weights.npz')
     svm.load_model('final_weights.npz')
+    # svm.load_model('C:/Users/AaronLo/Documents/cs376/Computer-Vision-Final-Project/weights/weights_20231127_194326_epoch_25000.npz')
     svm.svm_test(test_data, test_y_true)
