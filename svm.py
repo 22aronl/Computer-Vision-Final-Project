@@ -52,7 +52,7 @@ class SVM:
                         ti = batch_y_true[j] * (np.dot(self.weights, batch_data[j].T) + self.bias)
                         if ti <= 1:
                             gradient_weights += batch_y_true[j] * batch_data[j]
-                            gradient_bias += batch_y_true[j]
+                            gradient_bias -= batch_y_true[j]
                 #batch_y_ture 1x64
                 #batch_data 64 x 800
                 self.weights += -learning_rate * self.weights + learning_rate * gradient_weights
@@ -74,13 +74,13 @@ class SVM:
                 self.save_model(weights_filepath)
                 print(f"Weights saved at epoch {epoch + 1} with an accuracy of {accuracy:.4f}")
                 
-            if (epoch+1) % negative_min_freq == 0:
-                print(f'Negative mining at epoch {epoch + 1}')
-                print(f'{train_data.shape} {y_true.shape}')
-                train_data, y_true = self.negative_mine(train_data, y_true)
-                print(f'after {train_data.shape} {y_true.shape}')
-                # self.negative_mine(train_data, y_true)
-                pass
+            # if (epoch+1) % negative_min_freq == 0:
+            #     print(f'Negative mining at epoch {epoch + 1}')
+            #     print(f'{train_data.shape} {y_true.shape}')
+            #     train_data, y_true = self.negative_mine(train_data, y_true)
+            #     print(f'after {train_data.shape} {y_true.shape}')
+            #     # self.negative_mine(train_data, y_true)
+            #     pass
                 
         end_time = time.time()
         runtime = end_time - start_time

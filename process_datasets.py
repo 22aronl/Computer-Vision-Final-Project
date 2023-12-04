@@ -173,7 +173,7 @@ def read_images_with_annotations(annotation_path, target_ratio=1.5, false_scalin
         
             true_patches.append(true_patch_histogram)
             
-        false_patches.extend(generate_false_patches(45-len(annotation[1]), grey_image, annotation[1]))
+        false_patches.extend(generate_false_patches(20-len(annotation[1]), grey_image, annotation[1]))
     
     return true_patches, false_patches
 
@@ -198,7 +198,7 @@ def read_image_set(image_set_path, true_weighting=1):
     return np.array(data_set), np.array(y_true)
     
 def read_train_set():
-    return read_image_set(range(1, 8), true_weighting=10)
+    return read_image_set(range(1, 8), true_weighting=1)
 
 def read_test_set():
     return read_image_set(range(9, 10))
