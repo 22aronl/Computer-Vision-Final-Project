@@ -24,7 +24,7 @@ class SVM:
         # return np.maximum(0, 1 - y_true * y_pred)
 
 
-    def train(self, train_data, y_true, test_data, test_y_true, learning_rate=1e-5, epochs=1e5, batch_size=64, eval_freq=1000, save_freq=5000, negative_min_freq =5000, save_dir='weights'):
+    def train(self, train_data, y_true, test_data, test_y_true, learning_rate=1e-5, epochs=1e5, batch_size=64, eval_freq=1000, save_freq=5000, negative_min_freq =3000, save_dir='weights'):
         num_samples, num_features = train_data.shape
         self.weights = np.random.uniform(low=-1, high=1, size=num_features)
         self.bias = 0.0
@@ -83,13 +83,12 @@ class SVM:
                 self.save_model(weights_filepath)
                 print(f"Weights saved at epoch {epoch + 1} with an accuracy of {accuracy:.4f}")
                 
-            # if (epoch+1) % negative_min_freq == 0:
-            #     print(f'Negative mining at epoch {epoch + 1}')
-            #     print(f'{train_data.shape} {y_true.shape}')
-            #     train_data, y_true = self.negative_mine(train_data, y_true)
-            #     print(f'after {train_data.shape} {y_true.shape}')
-            #     # self.negative_mine(train_data, y_true)
-            #     pass
+            if (epoch+1) % negative_min_freq == 0:
+                print(f'Negative mining at epoch {epoch + 1}')
+                print(f'{train_data.shape} {y_true.shape}')
+                train_data, y_true = self.negative_mine(train_data, y_true)
+                print(f'after {train_data.shape} {y_true.shape}')
+                # self.negative_mine(train_data, y_true)
                 
         end_time = time.time()
         runtime = end_time - start_time
@@ -98,12 +97,12 @@ class SVM:
     def negative_mine(self, train_data, y_true, percentage_false=0.7):
         # breakpoint()
         predictions = self.predict(train_data)
-        false_positives_indices = np.where(np.logical_and(predictions <= 0, y_true == 1))[0]
+        false_positives_indices = np.where(np.logical_and(predictions > -0.2, y_true == -1))[0]
         
         #fal = predictions[false_positives]
         false_positives = sorted(false_positives_indices, key=lambda x: predictions[x], reverse=False)
         fal = train_data[false_positives[0:int(len(false_positives)*percentage_false)]]
-        neg = np.full(len(fal), 1)
+        neg = np.full(len(fal), -2)
         if(len(fal) == 0):
             return
         train_data = np.concatenate((train_data, fal), axis=0)

@@ -5,7 +5,7 @@ from hog_descriptor import extract_hog_descriptor
 from svm import SVM
 
 #greyscaled image
-def sliding_window(image, window_size, classifier: SVM, threshold=0, step_size=(8, 8)):
+def sliding_window(image, window_size, classifier: SVM, threshold=-0.5, step_size=(8, 8)):
     height, width = image.shape
     predictions = []
     
