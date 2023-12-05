@@ -69,7 +69,7 @@ def calculate_precision_recall(annotation_path, svm, iou_threshold_step):
 if __name__ == '__main__':
 
     svm = SVM()
-    svm.load_model('C:/Users/AaronLo/Documents/cs376/Computer-Vision-Final-Project/weights/weights_20231127_194326_epoch_25000.npz')
+    svm.load_model('C:/Users/AaronLo/Documents/cs376/Computer-Vision-Final-Project/weights/weights_20231204_140212_epoch_60000.npz')
 
 
     precision_values, recall_values = calculate_precision_recall(annotations_path.format(str(6).zfill(2)), svm, 0.1)

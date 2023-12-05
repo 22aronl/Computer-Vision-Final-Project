@@ -133,8 +133,8 @@ def read_annotation_file(file_path):
             
     return annotations
 
-# base_path = 'B:CS376_Images/assignment5'
-base_path = '/Users/aaronlo/Downloads'
+base_path = 'B:CS376_Images/assignment5'
+# base_path = '/Users/aaronlo/Downloads'
 annotations_path = f"{base_path}/FDDB-folds/FDDB-fold-{{}}-ellipseList.txt"
 images_path = f"{base_path}/originalPics/{{}}.jpg"
 
@@ -173,33 +173,33 @@ def read_images_with_annotations(annotation_path, target_ratio=1.5, false_scalin
         
             true_patches.append(true_patch_histogram)
             if not testing:
-                small_shift = 4
-                if(left_y - small_shift >= 0):
-                    true_patch = grey_image[left_y-small_shift:left_y+height-small_shift, left_x:left_x+width]
-                    true_patch = resize_image(true_patch)
-                    true_patch_histogram = extract_hog_descriptor(true_patch)
-                    true_patches.append(true_patch_histogram)
-                    
-                if(left_y + small_shift + height < grey_image.shape[0]):
-                    true_patch = grey_image[left_y+small_shift:left_y+height+small_shift, left_x:left_x+width]
-                    true_patch = resize_image(true_patch)
-                    true_patch_histogram = extract_hog_descriptor(true_patch)
-                    true_patches.append(true_patch_histogram)
-                    
-                if(left_x - small_shift >= 0):
-                    true_patch = grey_image[left_y:left_y+height, left_x-small_shift:left_x+width-small_shift]
-                    true_patch = resize_image(true_patch)
-                    true_patch_histogram = extract_hog_descriptor(true_patch)
-                    true_patches.append(true_patch_histogram)
-                    
-                if(left_x + small_shift + width < grey_image.shape[1]):
-                    true_patch = grey_image[left_y:left_y+height, left_x+small_shift:left_x+width+small_shift]
-                    true_patch = resize_image(true_patch)
-                    true_patch_histogram = extract_hog_descriptor(true_patch)
-                    true_patches.append(true_patch_histogram)
+                for small_shift in range(2, 4, 2):
+                    if(left_y - small_shift >= 0):
+                        true_patch = grey_image[left_y-small_shift:left_y+height-small_shift, left_x:left_x+width]
+                        true_patch = resize_image(true_patch)
+                        true_patch_histogram = extract_hog_descriptor(true_patch)
+                        true_patches.append(true_patch_histogram)
+                        
+                    if(left_y + small_shift + height < grey_image.shape[0]):
+                        true_patch = grey_image[left_y+small_shift:left_y+height+small_shift, left_x:left_x+width]
+                        true_patch = resize_image(true_patch)
+                        true_patch_histogram = extract_hog_descriptor(true_patch)
+                        true_patches.append(true_patch_histogram)
+                        
+                    if(left_x - small_shift >= 0):
+                        true_patch = grey_image[left_y:left_y+height, left_x-small_shift:left_x+width-small_shift]
+                        true_patch = resize_image(true_patch)
+                        true_patch_histogram = extract_hog_descriptor(true_patch)
+                        true_patches.append(true_patch_histogram)
+                        
+                    if(left_x + small_shift + width < grey_image.shape[1]):
+                        true_patch = grey_image[left_y:left_y+height, left_x+small_shift:left_x+width+small_shift]
+                        true_patch = resize_image(true_patch)
+                        true_patch_histogram = extract_hog_descriptor(true_patch)
+                        true_patches.append(true_patch_histogram)
                 
             
-        false_patches.extend(generate_false_patches(20-len(annotation[1]), grey_image, annotation[1]))
+        false_patches.extend(generate_false_patches(50*len(annotation[1]), grey_image, annotation[1]))
     
     return true_patches, false_patches
 

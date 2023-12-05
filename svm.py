@@ -71,6 +71,8 @@ class SVM:
                 self.evaluate_accuracy(test_data, test_y_true, threshold=-0.75)
                 self.evaluate_accuracy(test_data, test_y_true, threshold=-0.80)
                 self.evaluate_accuracy(test_data, test_y_true, threshold=-0.9)
+                print(f'')
+                print(f'')
                 # breakpoint()
                 
             if accuracy > max_accuracy or (epoch+1) % save_freq == 0:
