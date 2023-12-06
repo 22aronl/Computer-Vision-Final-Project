@@ -4,6 +4,7 @@ import cv2
 
 from hog_descriptor import extract_hog_descriptor
 
+#converts the ellipse to a rectangular box
 def convert_to_rectangular(major_axis_radius, minor_axis_radius, angle, center_x, center_y):
     ux = major_axis_radius * np.cos(angle)
     uy = major_axis_radius * np.sin(angle)
@@ -21,6 +22,7 @@ def convert_to_rectangular(major_axis_radius, minor_axis_radius, angle, center_x
     
     return [center_x-half_width, center_y-half_height, 2*half_width, 2*half_height]
 
+#returns the intersection over union of two rectangles, as well as the area of the intersection
 def intersection_over_union_area(rect1, rect2):
     x1, y1, w1, h1 = rect1
     x2, y2, w2, h2 = rect2
@@ -38,6 +40,7 @@ def intersection_over_union_area(rect1, rect2):
 
     return iou, area_inter
 
+#returns the intersection over union of two rectangles
 def intersection_over_union(rect1, rect2):
     x1, y1, w1, h1 = rect1
     x2, y2, w2, h2 = rect2
@@ -55,6 +58,7 @@ def intersection_over_union(rect1, rect2):
 
     return iou
 
+#generates a random patch from the image
 def generate_random_patch(image_shape, aspect_ratio=1.5, min_size = 20):
     image_height, image_width = image_shape
     img_aspect_ratio = image_height / image_width
@@ -73,6 +77,7 @@ def generate_random_patch(image_shape, aspect_ratio=1.5, min_size = 20):
     
     return [x, y, patch_width, patch_height]
 
+#generates false patches from the image
 def generate_false_patches(num_patches, image, true_patches, image_size=(96, 64), iou_threshold=0.3, max_attempts_scale=5):
     aspect_ratio = image_size[0] / image_size[1]
     false_patches = []
@@ -98,6 +103,7 @@ def generate_false_patches(num_patches, image, true_patches, image_size=(96, 64)
         
     return false_patches
 
+#extracts the intended ratio from the image
 def extract_intended_ratio(center_x, center_y, half_width, half_height, target_ratio=1.5):
     aspect_ratio = half_height / half_width
     # print(f'old {half_height} {half_width}')
@@ -109,7 +115,7 @@ def extract_intended_ratio(center_x, center_y, half_width, half_height, target_r
     
     return center_x, center_y, half_width, half_height
     
-
+#reads the annotation file and returns a list of annotations
 def read_annotation_file(file_path):
     annotations = []
     
@@ -138,6 +144,7 @@ base_path = 'B:CS376_Images/assignment5'
 annotations_path = f"{base_path}/FDDB-folds/FDDB-fold-{{}}-ellipseList.txt"
 images_path = f"{base_path}/originalPics/{{}}.jpg"
 
+#reads the images with annotations and returns a list of true patches and false patches
 def read_images_with_annotations(annotation_path, target_ratio=1.5, false_scaling=9, testing=False):
     
     true_patches = []
@@ -173,7 +180,7 @@ def read_images_with_annotations(annotation_path, target_ratio=1.5, false_scalin
         
             true_patches.append(true_patch_histogram)
             if not testing:
-                small_shift = 4
+                small_shift = 4 #we shift the patch by 4 pixels in each direction to generate more true patches
                 if(left_y - small_shift >= 0):
                     true_patch = grey_image[left_y-small_shift:left_y+height-small_shift, left_x:left_x+width]
                     true_patch = resize_image(true_patch)
@@ -229,6 +236,7 @@ def read_train_set():
 def read_test_set():
     return read_image_set(range(9, 10), testing=True)
 
+#resizes the image to the target size
 def resize_image(image, target_size=(64, 96)):
     aspect_ratio = image.shape[0] / image.shape[1]
     if(abs(aspect_ratio - target_size[1] / target_size[0]) > 0.2):
@@ -236,17 +244,10 @@ def resize_image(image, target_size=(64, 96)):
         # breakpoint()
         
     assert(abs(aspect_ratio - target_size[1] / target_size[0]) < 0.2)
-    
-    # if aspect_ratio > 1:
-    #     new_width = target_size
-    #     new_height = int(target_size / aspect_ratio)
-    # else:
-    #     new_width = int(target_size * aspect_ratio)
-    #     new_height = target_size
 
     # Choose the appropriate interpolation method based on whether it's upscaling or downscaling
     if target_size[1] > image.shape[0] or target_size[0] > image.shape[1]:
-        interpolation = cv2.INTER_LINEAR  # or cv2.INTER_CUBIC for higher quality
+        interpolation = cv2.INTER_LINEAR
     else:
         interpolation = cv2.INTER_AREA
 
