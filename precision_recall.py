@@ -7,8 +7,8 @@ from svm import SVM
 from process_datasets import read_annotation_file, intersection_over_union
 from sliding_window import image_pyramid, nme
 
-# base_path = 'B:CS376_Images/assignment5'
-base_path = '/Users/aaronlo/Downloads'
+base_path = 'B:CS376_Images/assignment5'
+# base_path = '/Users/aaronlo/Downloads'
 annotations_path = f"{base_path}/FDDB-folds/FDDB-fold-{{}}-ellipseList.txt"
 images_path = f"{base_path}/originalPics/{{}}.jpg"
 
@@ -21,7 +21,7 @@ def calculate_precision_recall(annotation_path, svm, iou_threshold=0.5):
     total_faces = 0
     
     print(f'annotations {len(annotations)}')
-    annotations = annotations[0:15]
+    # annotations = annotations[0:15]
     current_iteration = 0
     for annotation in annotations:
         print(f'current iteration {current_iteration} out of {len(annotations)}')
@@ -60,8 +60,9 @@ def calculate_precision_recall(annotation_path, svm, iou_threshold=0.5):
 if __name__ == '__main__':
 
     svm = SVM()
-    # svm.load_model('C:/Users/AaronLo/Documents/cs376/Computer-Vision-Final-Project/weights/weights_20231204_140212_epoch_60000.npz')
-    svm.load_model('/Users/aaronlo/Desktop/cs376/assignment5/weights/weights_20231204_050455_epoch_3000.npz')
+    svm.load_model('C:/Users/AaronLo/Documents/cs376/Computer-Vision-Final-Project/weights/weights_20231205_103520_epoch_10000.npz')
+    # svm.load_model('/Users/aaronlo/Desktop/cs376/assignment5/weights/weights_20231204_050455_epoch_3000.npz')
+    
 
     confidence, correct, total_faces = calculate_precision_recall(annotations_path.format(str(6).zfill(2)), svm, 0.1)
 

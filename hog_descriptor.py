@@ -4,8 +4,8 @@ import numpy as np
 #needs gray scaled input patch
 def calculate_gradient(patch):
     
-    dx = cv2.Sobel(patch, cv2.CV_64F, 1, 0, ksize=1)
-    dy = cv2.Sobel(patch, cv2.CV_64F, 0, 1, ksize=1)
+    dx = np.array(cv2.Sobel(patch, cv2.CV_64F, 1, 0, ksize=1))
+    dy = np.array(cv2.Sobel(patch, cv2.CV_64F, 0, 1, ksize=1))
 
     magnitude = np.sqrt(dx*dx + dy*dy)
     direction = np.arctan2(dy, dx)

@@ -5,7 +5,7 @@ from hog_descriptor import extract_hog_descriptor
 from svm import SVM
 
 #greyscaled image
-def sliding_window(image, window_size, classifier: SVM, threshold=-0.5, step_size=(8, 8)):
+def sliding_window(image, window_size, classifier: SVM, threshold=-1, step_size=(4, 4)):
     height, width = image.shape
     predictions = []
     
@@ -19,7 +19,7 @@ def sliding_window(image, window_size, classifier: SVM, threshold=-0.5, step_siz
             window_hog = extract_hog_descriptor(resized_window)
             prediction = classifier.predict(window_hog)
             
-            if prediction > threshold:
+            if prediction >= threshold:
                 predictions.append([j, i, window_size[0], window_size[1], prediction])
                 
     return predictions

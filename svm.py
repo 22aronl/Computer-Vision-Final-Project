@@ -24,7 +24,7 @@ class SVM:
         # return np.maximum(0, 1 - y_true * y_pred)
 
 
-    def train(self, train_data, y_true, test_data, test_y_true, learning_rate=1e-5, epochs=1e5, batch_size=64, eval_freq=1000, save_freq=5000, negative_min_freq =3000, save_dir='weights'):
+    def train(self, train_data, y_true, test_data, test_y_true, learning_rate=1e-5, epochs=1e5, batch_size=64, eval_freq=1000, save_freq=5000, negative_min_freq =2000, save_dir='weights'):
         num_samples, num_features = train_data.shape
         self.weights = np.random.uniform(low=-1, high=1, size=num_features)
         self.bias = 0.0
@@ -94,10 +94,10 @@ class SVM:
         runtime = end_time - start_time
         print(f"Total runtime: {runtime:.2f} seconds")
         
-    def negative_mine(self, train_data, y_true, percentage_false=0.7):
+    def negative_mine(self, train_data, y_true, percentage_false=0.8):
         # breakpoint()
         predictions = self.predict(train_data)
-        false_positives_indices = np.where(np.logical_and(predictions > -0.2, y_true == -1))[0]
+        false_positives_indices = np.where(np.logical_and(predictions > -0.7, y_true == -1))[0]
         
         #fal = predictions[false_positives]
         false_positives = sorted(false_positives_indices, key=lambda x: predictions[x], reverse=False)

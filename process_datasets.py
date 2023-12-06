@@ -133,8 +133,8 @@ def read_annotation_file(file_path):
             
     return annotations
 
-# base_path = 'B:CS376_Images/assignment5'
-base_path = '/Users/aaronlo/Downloads'
+base_path = 'B:CS376_Images/assignment5'
+# base_path = '/Users/aaronlo/Downloads'
 annotations_path = f"{base_path}/FDDB-folds/FDDB-fold-{{}}-ellipseList.txt"
 images_path = f"{base_path}/originalPics/{{}}.jpg"
 
@@ -173,30 +173,30 @@ def read_images_with_annotations(annotation_path, target_ratio=1.5, false_scalin
         
             true_patches.append(true_patch_histogram)
             if not testing:
-                for small_shift in range(2, 4, 2):
-                    if(left_y - small_shift >= 0):
-                        true_patch = grey_image[left_y-small_shift:left_y+height-small_shift, left_x:left_x+width]
-                        true_patch = resize_image(true_patch)
-                        true_patch_histogram = extract_hog_descriptor(true_patch)
-                        true_patches.append(true_patch_histogram)
-                        
-                    if(left_y + small_shift + height < grey_image.shape[0]):
-                        true_patch = grey_image[left_y+small_shift:left_y+height+small_shift, left_x:left_x+width]
-                        true_patch = resize_image(true_patch)
-                        true_patch_histogram = extract_hog_descriptor(true_patch)
-                        true_patches.append(true_patch_histogram)
-                        
-                    if(left_x - small_shift >= 0):
-                        true_patch = grey_image[left_y:left_y+height, left_x-small_shift:left_x+width-small_shift]
-                        true_patch = resize_image(true_patch)
-                        true_patch_histogram = extract_hog_descriptor(true_patch)
-                        true_patches.append(true_patch_histogram)
-                        
-                    if(left_x + small_shift + width < grey_image.shape[1]):
-                        true_patch = grey_image[left_y:left_y+height, left_x+small_shift:left_x+width+small_shift]
-                        true_patch = resize_image(true_patch)
-                        true_patch_histogram = extract_hog_descriptor(true_patch)
-                        true_patches.append(true_patch_histogram)
+                small_shift = 4
+                if(left_y - small_shift >= 0):
+                    true_patch = grey_image[left_y-small_shift:left_y+height-small_shift, left_x:left_x+width]
+                    true_patch = resize_image(true_patch)
+                    true_patch_histogram = extract_hog_descriptor(true_patch)
+                    true_patches.append(true_patch_histogram)
+                    
+                if(left_y + small_shift + height < grey_image.shape[0]):
+                    true_patch = grey_image[left_y+small_shift:left_y+height+small_shift, left_x:left_x+width]
+                    true_patch = resize_image(true_patch)
+                    true_patch_histogram = extract_hog_descriptor(true_patch)
+                    true_patches.append(true_patch_histogram)
+                    
+                if(left_x - small_shift >= 0):
+                    true_patch = grey_image[left_y:left_y+height, left_x-small_shift:left_x+width-small_shift]
+                    true_patch = resize_image(true_patch)
+                    true_patch_histogram = extract_hog_descriptor(true_patch)
+                    true_patches.append(true_patch_histogram)
+                    
+                if(left_x + small_shift + width < grey_image.shape[1]):
+                    true_patch = grey_image[left_y:left_y+height, left_x+small_shift:left_x+width+small_shift]
+                    true_patch = resize_image(true_patch)
+                    true_patch_histogram = extract_hog_descriptor(true_patch)
+                    true_patches.append(true_patch_histogram)
                 
             
         false_patches.extend(generate_false_patches(false_scaling*len(annotation[1]), grey_image, annotation[1]))
@@ -224,7 +224,7 @@ def read_image_set(image_set_path, true_weighting=1, testing=False, false_scalin
     return np.array(data_set), np.array(y_true)
     
 def read_train_set():
-    return read_image_set(range(1, 8), true_weighting=1, false_scaling=50)
+    return read_image_set(range(1, 8), true_weighting=1, false_scaling=100)
 
 def read_test_set():
     return read_image_set(range(9, 10), testing=True)
