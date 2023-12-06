@@ -5,7 +5,7 @@ from hog_descriptor import extract_hog_descriptor
 from svm import SVM
 
 # slides the window size across the image in steps of step_size, returns the predictions from thje sVM classifier
-def sliding_window(image, window_size, classifier: SVM, threshold=-0.9, step_size=(4, 4)):
+def sliding_window(image, window_size, classifier: SVM, threshold=-0.5, step_size=(4, 4)):
     height, width = image.shape
     predictions = []
     
@@ -87,8 +87,8 @@ def overlay_boxes(image, boxes, color=(0, 0, 255), thickness=2):
 
 if __name__ == '__main__':  
     svm = SVM()
-    svm.load_model('C:/Users/AaronLo/Documents/cs376/Computer-Vision-Final-Project/weights/weights_20231205_203814_epoch_30000.npz')
-    img = cv2.imread("B:CS376_Images/assignment5/originalPics/2003/01/21/big/img_1071.jpg")
+    svm.load_model('C:/Users/AaronLo/Documents/cs376/Computer-Vision-Final-Project/weights_20231205_203814_epoch_30000.npz')
+    img = cv2.imread("B:CS376_Images/assignment5/originalPics/2003/07/11/big/img_605.jpg")
     grey_img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     
     total_predictions = image_pyramid(grey_img, svm)

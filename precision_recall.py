@@ -23,7 +23,6 @@ def calculate_precision_recall(annotation_path, svm, iou_threshold=0.5):
     total_faces = 0
     
     print(f'annotations {len(annotations)}')
-    # annotations = annotations[0:15]
     current_iteration = 0
     for annotation in annotations:
         print(f'current iteration {current_iteration} out of {len(annotations)}')
@@ -69,7 +68,6 @@ def calculate_precision_recall2(annotation_path, face_classifier, iou_threshold=
     total_faces = 0
     
     print(f'annotations {len(annotations)}')
-    # annotations = annotations[0:100]
     current_iteration = 0
     for annotation in annotations:
         print(f'current iteration {current_iteration} out of {len(annotations)}')
@@ -111,7 +109,7 @@ def calculate_precision_recall2(annotation_path, face_classifier, iou_threshold=
 if __name__ == '__main__':
 
     svm = SVM()
-    svm.load_model('C:/Users/AaronLo/Documents/cs376/Computer-Vision-Final-Project/weights/weights_20231205_103520_epoch_10000.npz')
+    svm.load_model('C:/Users/AaronLo/Documents/cs376/Computer-Vision-Final-Project/weights_20231205_203814_epoch_30000.npz')
     # svm.load_model('/Users/aaronlo/Desktop/cs376/assignment5/weights/weights_20231204_050455_epoch_3000.npz')
     # face_classifier = cv2.CascadeClassifier(
     # cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
@@ -147,8 +145,5 @@ if __name__ == '__main__':
     plt.ylabel('Precision')
     plt.title('Precision-Recall Curve')
     plt.legend()
-    
-    # plt.xlim(0, 1)
-    # plt.ylim(0, 1)  
-    
+
     plt.show()
